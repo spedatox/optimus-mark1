@@ -38,6 +38,74 @@ When in doubt about any behavior, type, interface, or relationship — **go back
 
 ---
 
+## ⛔ The Line-Count Rule — MANDATORY
+
+Every ported file must be cross-checked against the TypeScript original by line count.
+
+**A Python file that is dramatically shorter than its TypeScript source is a red flag and almost certainly a stub or a partial port.** Before committing any file, verify:
+
+```
+TS source lines  →  Python lines
+-------------------------------------
+bashSecurity.ts    2592  →  bash_security.py    must be ≥ 400 non-comment lines
+bashPermissions.ts 2621  →  bash_permissions.py must be ≥ 500 non-comment lines
+pathValidation.ts  1990  →  path_validation.py  must be ≥ 350 non-comment lines
+commands.ts        1339  →  commands.py         must be ≥ 250 non-comment lines
+```
+
+Python is more concise than TypeScript. But if a 2000-line TS file produces an 80-line Python file, that is not a port — it is a skeleton. The minimum acceptable ratio is roughly **1 Python line per 4–5 TS lines** for large files (types, JSDoc, braces inflate TS). If the ratio is worse than 1:8, treat it as incomplete and go back to the source.
+
+---
+
+## ⛔ The "No Thin Wrapper" Rule — MANDATORY
+
+Do not write a thin wrapper that:
+- Imports 2–3 things and re-exports them
+- Has a class with `pass` or `...` as the body
+- Has methods that return `None` without performing the actual logic
+- Has functions that raise `NotImplementedError`
+- Delegates everything to `try: from ... import X; X()` without the actual logic
+
+Every function must contain the **real logic** from the TypeScript source. If a dependency module hasn't been ported yet, either port it first or write a clearly-marked stub with a `# TODO: port <filename>.ts` comment and file a note in `PORTING_NOTES.md`. Do not silently omit logic.
+
+---
+
+## ⛔ The "Read the Whole File" Rule — MANDATORY
+
+Before implementing any module:
+
+1. Read the **entire** TypeScript source file from line 1 to the last line
+2. Count the exported functions — every one must have a Python equivalent
+3. Note all constants, all enums, all type aliases — every one must be ported
+4. Note the imports — every dependency that contains logic must either be already ported or explicitly stubs
+
+Partial reads lead to partial ports. If a file is 3000 lines, read all 3000 lines before writing a single line of Python.
+
+---
+
+## ⛔ The Status+README Maintenance Rule — MANDATORY
+
+After every session that adds or changes files:
+
+1. **Update `STATUS.md`** — move completed items to "What's Done", update the file count, update "What's Next" to reflect only items that are actually not yet ported
+2. **Update `README.md`** — keep the "What's built" table and roadmap current
+
+The "What's Next" section must **never** list items that are already done. Listing `bash_tool.py` as pending when it already exists, or listing `bash_security.py` as needed when it was just written — that is a lie in the documentation and makes it impossible to track real progress.
+
+---
+
+## ⛔ The "No False Progress" Rule — MANDATORY
+
+Do not claim a module is "done" if:
+- It has unexplained `pass` statements in non-exception-handler positions
+- It has functions that do nothing (no side effects, no return value, no logic)
+- It delegates to modules that don't exist yet without documenting that
+- It silently ignores entire sections of the TypeScript source
+
+When a module has a genuine dependency that hasn't been ported yet, that dependency is a blocker. Document it. Don't silently omit the logic that depends on it.
+
+---
+
 ## Technology Mapping
 
 Resolve TypeScript dependencies to their Python equivalents:
@@ -59,6 +127,8 @@ Resolve TypeScript dependencies to their Python equivalents:
 | `z.object({})` | Pydantic `BaseModel` |
 | `index.ts` | `__init__.py` |
 | `camelCase` files/functions | `snake_case` |
+| `feature('FLAG')` Bun DCE | `False` constant (feature flags are off in Python port) |
+| `logEvent(...)` analytics | no-op / omit |
 
 When you encounter a TypeScript dependency not in this table, find its Python equivalent yourself. There is always one.
 
@@ -79,14 +149,9 @@ find claude_code_src/src -type f -name "*.ts" | sort
 
 ## What Already Exists
 
-Current `optimus/` contains:
-- `types/` — message, permissions, tools, hooks, ids, logs types
-- `constants/` — common and tools constants
-- `utils/` — env_utils, features
-- `tool.py` — Tool Protocol, ToolUseContext, build_tool factory
-- `tools.py` — tool registry
+Read `STATUS.md` before every session. It is the authoritative record of what has and has not been ported. Do not re-port things that exist. Do not claim things are done when they are not.
 
-Before writing anything, check what's already there. Extend it. Stay consistent with the patterns already established.
+The "What Already Exists" list in this file is intentionally kept short — go read `STATUS.md` for the real inventory.
 
 ---
 
@@ -101,6 +166,7 @@ Before writing anything, check what's already there. Extend it. Stay consistent 
 - MCP, agent/swarm, history — all functional
 - `PORTING_NOTES.md` is complete
 - Zero unimplemented stubs remain
+- `STATUS.md` accurately reflects the above
 
 ---
 
