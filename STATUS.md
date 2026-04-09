@@ -10,10 +10,10 @@
 | Metric | Count |
 |--------|-------|
 | Target modules | ~1,300 |
-| Python files completed | 63 |
-| Completion | ~5% |
+| Python files completed | ~85 |
+| Completion | ~7% |
 
-The foundation layer is solid. Core types, configuration, permissions, and shell utilities are all done. The remaining work is tools (40+), the agent query loop, services (MCP, API, analytics), and the Textual TUI.
+Foundation + core tools + query loop done. The agent can now run in REPL mode (`python -m optimus`), execute shell commands, read/write/edit files, and search. Remaining: full tool set (~30 tools), MCP services, Textual TUI, and the long tail of utilities.
 
 ---
 
@@ -92,15 +92,39 @@ The foundation layer is solid. Core types, configuration, permissions, and shell
 ### History & Tool Infrastructure
 - `history.py` — async buffered prompt history, file locking, pasted-text ref expansion
 - `tool.py` — `Tool` Protocol, `ToolUseContext`, `build_tool` factory
-- `tools.py` — tool registry
+- `tools.py` — full tool registry + `get_all_tools()`
+
+### Shell Layer
+- `utils/shell/bash_provider.py` — async subprocess, output truncation (100KB), cwd tracking
+- `utils/shell/shell_tool_utils.py` — PowerShell gate
+- `utils/bash/` — bash_parser, bash_pipe_command, shell_quote, shell_quoting, shell_prefix
+
+### Query Engine
+- `query.py` — streaming agentic loop (API call → tool dispatch → multi-turn)
+
+### Tools
+| Tool | Class |
+|------|-------|
+| `Bash` | `tools/bash_tool/bash_tool.py` |
+| `Read` | `tools/file_read_tool/file_read_tool.py` |
+| `Edit` | `tools/file_edit_tool/file_edit_tool.py` |
+| `Write` | `tools/file_write_tool/file_write_tool.py` |
+| `Glob` | `tools/glob_tool/glob_tool.py` |
+| `Grep` | `tools/grep_tool/grep_tool.py` |
+| `LS` | `tools/ls_tool/ls_tool.py` |
+| `WebFetch` | `tools/web_fetch_tool/web_fetch_tool.py` |
+| `WebSearch` | `tools/web_search_tool/web_search_tool.py` |
+| `TodoWrite` | `tools/todo_write_tool/todo_write_tool.py` |
+| `Agent` | `tools/agent_tool/agent_tool.py` |
+
+### CLI Entry Point
+- `__main__.py` — `python -m optimus` / `optimus` CLI (REPL + single-turn)
 
 ---
 
 ## What's Next 🔜
 
-### Priority 1 — Shell Execution
-- `utils/shell/bash_provider.py` — `BashProvider`: async subprocess, streaming stdout/stderr, timeout (120s), output truncation (100KB)
-- `utils/shell/shell_tool_utils.py` — shared shell tool utilities
+### Priority 1 — Remaining Tools (~29 tools)
 
 ### Priority 2 — BashTool (first runnable tool)
 - `tools/bash_tool/bash_command_helpers.py`
