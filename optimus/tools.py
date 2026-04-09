@@ -481,3 +481,32 @@ def get_merged_tools(
     """
     built_in_tools = get_tools(permission_context)
     return list(built_in_tools) + list(mcp_tools)
+
+
+def get_all_tools() -> list[Any]:
+    """
+    Return the set of tools available for a default REPL session.
+    Convenience wrapper used by __main__.py and tests.
+    """
+    from optimus.tools.bash_tool.bash_tool import bash_tool
+    from optimus.tools.file_read_tool.file_read_tool import file_read_tool
+    from optimus.tools.file_edit_tool.file_edit_tool import file_edit_tool
+    from optimus.tools.file_write_tool.file_write_tool import file_write_tool
+    from optimus.tools.glob_tool.glob_tool import glob_tool
+    from optimus.tools.grep_tool.grep_tool import grep_tool
+    from optimus.tools.ls_tool.ls_tool import ls_tool
+    from optimus.tools.web_fetch_tool.web_fetch_tool import web_fetch_tool
+    from optimus.tools.web_search_tool.web_search_tool import web_search_tool
+    from optimus.tools.todo_write_tool.todo_write_tool import todo_write_tool
+    return [
+        bash_tool,
+        file_read_tool,
+        file_edit_tool,
+        file_write_tool,
+        glob_tool,
+        grep_tool,
+        ls_tool,
+        web_fetch_tool,
+        web_search_tool,
+        todo_write_tool,
+    ]

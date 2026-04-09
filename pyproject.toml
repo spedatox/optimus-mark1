@@ -1,0 +1,61 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "optimus"
+version = "0.1.0"
+description = "OPTIMUS Mark I — Python port of Claude Code by Anthropic"
+authors = ["Ahmet Erol Bayrak"]
+readme = "README.md"
+packages = [{include = "optimus"}]
+
+[tool.poetry.scripts]
+optimus = "optimus.__main__:main"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+anthropic = ">=0.40.0"
+mcp = ">=1.0.0"
+textual = ">=0.60.0"
+pydantic = "^2.0"
+click = "^8.0"
+rich = ">=13.0"
+pyee = "^11.0"
+aiohttp = "^3.9"
+aiofiles = "^23.0"
+pyyaml = "^6.0"
+toml = "^0.10"
+gitpython = "^3.1"
+keyring = "^24.0"
+cryptography = "^42.0"
+tiktoken = "^0.7"
+pillow = "^10.0"
+pygments = "^2.17"
+watchdog = "^4.0"
+psutil = "^5.9"
+toolz = "^0.12"
+cachetools = "^5.3"
+nbformat = "^5.9"
+websockets = "^12.0"
+httpx = "^0.27"
+anyio = "^4.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^8.0"
+pytest-asyncio = "^0.23"
+mypy = "^1.9"
+ruff = "^0.4"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
