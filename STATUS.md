@@ -10,10 +10,10 @@
 | Metric | Count |
 |--------|-------|
 | Target modules | ~1,300 |
-| Python files completed | ~85 |
-| Completion | ~7% |
+| Python files completed | ~130 |
+| Completion | ~10% |
 
-Foundation + core tools + query loop done. The agent can now run in REPL mode (`python -m optimus`), execute shell commands, read/write/edit files, and search. Remaining: full tool set (~30 tools), MCP services, Textual TUI, and the long tail of utilities.
+Foundation + full tool set (40 tools) + query loop done. All 40 tools have Python implementations including TaskCreate/Get/Update/List, Cron (Create/Delete/List), Team (Create/Delete), SendMessage, RemoteTrigger, WorktreeEnter/Exit, MCP resources, Brief, Config, ToolSearch, REPL, PowerShell, Skill, SyntheticOutput, LSP, McpAuth. Supporting modules: task_registry, utils/tasks, services/mcp, utils/swarm, commands. Remaining: MCP full client implementation, Textual TUI, services/api, and the long tail of utilities.
 
 ---
 
